@@ -435,3 +435,247 @@ def same_even(a, b):
         if a[i] == b[i] and a[i] % 2 == 0:
             result.append(a[i])
     return result
+#27
+process=lambda lst:sorted(lst,key=lambda x:(-len(x),x))[:5]
+words=["apple","hi","banana","car","apricot","dog","zebra"]
+result=process(words)
+print(result)
+#25
+process=lambda data: [sum(lst) / len(lst)
+    for lst in data
+    if len(lst) >= 3 and sum(lst) % 2 == 0]
+#21
+def process(lst):
+    result = []
+    for s in lst:
+        only_letters =True
+        for ch in s:
+            if not (('a'<=ch<='z')or('A'<=ch<= 'Z')):
+                only_letters=False
+                break
+        if only_letters and len(s)>4 and len(set(s))==len(s):
+            result.append(s.upper())
+    return result
+#33
+def merge_dicts_sum(d1, d2):
+    result = {}
+    for key in d1:
+        result[key] = d1[key]
+    for key in d2:
+        if key in result:
+            result[key] += d2[key]
+        else:
+            result[key] = d2[key]
+    return result
+d1 = {"a": 5, "b": 3, "c": 10}
+d2 = {"b": 7, "c": 2, "d": 8}
+print(merge_dicts_sum(d1, d2))
+#34
+def filter_sets(sets_list):
+    result = []
+    for s in sets_list:
+        if len(s) <= 3:
+            continue
+        has_even = False
+        has_negative = False
+        for num in s:
+            if num < 0:
+                has_negative = True
+            if num % 2 == 0:
+                has_even = True
+        if not has_negative and has_even:
+            result.append(s)
+    return result
+sets_list = [
+    {1, 2, 3, 4},
+    {1, 3, 5, 7},
+    {2, 4, 6, 8},
+    {-1, 2, 3, 4},
+    {10, 11, 12, 13}]
+print(filter_sets(sets_list))
+#32
+filter_set = lambda s: set(
+    filter(
+        lambda x: x > sum(s)/len(s) and x % 2 != 0 and x % 5 != 0,
+    s))
+nums = {3, 7, 10, 11, 15, 18, 21}
+print(filter_set(nums))
+#35
+top5_keys = lambda d: [k for k, v in sorted(d.items(), key=lambda x: (-x[1], x[0]))[:5]]
+data = {
+    "apple": 10,
+    "banana": 7,
+    "cherry": 10,
+    "date": 5,
+    "fig": 7,
+    "grape": 12,
+    "kiwi": 7}
+print(top5_keys(data))
+#1
+check=lambda x: "положительное" if x>0 else("отрицательное" if x<0 else "ноль")
+#2
+words = ["арбуз", "кот", "машина", "дом", "ананас"]
+result=sorted(words,key=lambda s:(len(s),s[0]))
+print(result)
+#3
+numbers = [5, 12, 7, 20, 33, 8]
+result=list(filter(lambda x: x%2==0 and x>10,numbers))
+print(result)
+#4
+numbers = [1, 2, 3, 4, 5, 6]
+result = list(map(lambda x:x**2 if x%2==0 else x*3,numbers))
+print(result)
+#5
+compare=lambda a, b:("a больше" if a > b else("b больше" if b > a else "равны"))
+#6
+numbers = [0, -3, 5, -7, 8]
+result = [(lambda x: "положительное" if x > 0 else "отрицательное" if x < 0 else "ноль")(n) for n in numbers]
+print(result)
+#1
+def even_numbers(n):
+    for i in range(1, n + 1):
+        if i % 2 == 0:
+            if i % 4 == 0:
+                yield "кратно 4"
+            else:
+                yield i
+for x in even_numbers(10):
+    print(x)
+#2
+def filter_words(words):
+    for w in words:
+        if len(w) > 4:
+            if "a" in w:
+                yield "c a"
+            else:
+                yield w
+words = ["кот", "машина", "арбуз", "дом"]
+for w in filter_words(words):
+    print(w)
+#3
+def infinite_numbers():
+    n = 1
+    while True:
+        if n % 3 == 0 and n % 5 == 0:
+            yield "FizzBuzz"
+        elif n % 3 == 0:
+            yield "Fizz"
+        elif n % 5 == 0:
+            yield "Buzz"
+        else:
+            yield n
+        n += 1
+gen = infinite_numbers()
+for _ in range(20):
+    print(next(gen))
+#4
+def squares(n):
+    for i in range(1, n + 1):
+        square = i ** 2
+        if square % 2 == 0:
+            yield "чётный квадрат"
+        else:
+            yield square
+for x in squares(5):
+    print(x)
+#1
+squares = [x**2 for x in range(1, 21) if x % 2 == 0]
+print(squares)
+#2
+matrix = [[1,2,3], [4,5,6], [7,8,9]]
+result = [(lambda x: x[0]*x[1]*x[2])(x) for x in matrix]
+print(result)
+#3
+words = ["кот", "машина", "ананас", "дом"]
+result = [word for word in words if len(word) > 4 and "а" not in word]
+print(result)
+#4
+numbers = [1, 2, 3, 4, 5]
+result = {n: ("чётное" if n % 2 == 0 else "нечётное") for n in numbers}
+print(result)
+#5
+matrix = [[1,2], [3,4], [5,6]]
+flat = [x for row in matrix for x in row]
+print(flat)
+#6
+numbers = list(range(1, 21))
+result = [
+    "FizzBuzz" if n % 3 == 0 and n % 5 == 0 else "Fizz" if n % 3 == 0
+    else "Buzz" if n % 5 == 0
+    else n
+    for n in numbers]
+print(result)
+#1
+def is_prime(x):
+    if x < 2:
+        return False
+    for i in range(2, x):
+        if x % i == 0:
+            return False
+    return True
+def special_numbers(n):
+    for i in range(1, n + 1):
+        if i % 3 == 0 and i % 5 == 0:
+            yield "FizzBuzz"
+        elif i % 3 == 0:
+            yield "Fizz"
+        elif i % 5 == 0:
+            yield "Buzz"
+        elif is_prime(i):
+            yield "простое"
+        else:
+            yield i
+for x in special_numbers(15):
+    print(x)
+#2
+words = ["кот", "машина", "арбуз", "дом", "ананас"]
+result = [
+    (lambda w: (w.upper() if len(w) > 4 else "short") + ("*" if "а" in w else ""))(word)
+    for word in words]
+print(result)
+#3
+def process_numbers(numbers):
+    positive = filter(lambda x: x >= 0, numbers)
+    for n in positive:
+        yield (lambda x: x/2 if x % 2 == 0 else x*3 + 1)(n)
+numbers = [5, -2, 8, 0, -7, 3]
+for x in process_numbers(numbers):
+    print(x)
+#4
+students = [("Иван", 85), ("Анна", 72), ("Пётр", 90), ("Мария", 60)]
+g = lambda x: "Отлично" if x >= 90 else "Хорошо" if x >= 70 else "Удовлетворительно"
+r = {name: g(score) for name, score in students}
+print(r)
+#5
+def matrix_transform(matrix):
+    for row in matrix:
+        for x in row:
+            yield (
+                "кратно 6" if x%6 == 0
+                else "чётное" if x%2 == 0
+                else "кратно 3" if x%3 == 0
+                else x)
+matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
+for x in matrix_transform(matrix):
+    print(x)
+#1
+numbers = [1, 2, 3, 4, 5]
+doubled = list(map(lambda x: x * 2, numbers))
+print(doubled)
+#2
+words = ["кот", "машина", "арбуз", "дом"]
+result = list(map(lambda w: w.upper() + "!" if len(w) > 3 else w.upper(), words))
+print(result)
+#3
+numbers = [1,2,3,4,5,6,7,8,9,10]
+evens = list(filter(lambda x: x % 2 == 0, numbers))
+print(evens)
+#4
+numbers = [0, 5, 12, 7, 20, -3, 8]
+result = list(
+    map(lambda x: x/2 if x % 2 == 0 else x*3,filter(lambda x: x > 5, numbers)))
+print(result)
