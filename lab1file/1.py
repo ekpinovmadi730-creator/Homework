@@ -48,7 +48,6 @@ def alternate_case_blocks(text, n):
             result += block.lower()
     return result
 print(alternate_case_blocks("helloworld", 2))
-
 # 1
 def analyze_text(text):
     text = text.lower()
@@ -77,11 +76,11 @@ def analyze_text(text):
 text = "level, radar! apple 123456 refer hello"
 print(analyze_text(text))
 #3
-def top_k_words(t, k):
-    t = t.lower()
+def top_k_words(text, k):
+    text = text.lower()
     c =""
     a = "abcdefghijklmnopqrstuvwxyzәіңғүұқөһ "
-    for ch in t:
+    for ch in text:
         if ch in a:
             c +=ch
         else:
@@ -112,6 +111,8 @@ def top_k_words(t, k):
     return r
 text="apple banana apple orange banana apple"
 k=2
+print(top_k_words(text,k))
+
 #4
 def change_words(text):
     w=text.split()
@@ -160,7 +161,6 @@ def common_unique_chars(s1, s2):
         if ch in s2 and ch not in result:
             result+=ch
     return result
-
 #13
 def replace_every_nth(text, n, char):
     result=""
@@ -315,6 +315,7 @@ def moving_average(nums,k):
             avg=sum_window/k
             result.append(avg)
     return result
+#30
 def analyze_strings_list(words):
     result=[]
     for word in words:
@@ -919,93 +920,56 @@ def analyze_students(data):
     result_students = []
     global_word_counts = {}
     all_vowels = set()
-
     for student in data:
         name = student.get("name", "")
-
-        # 1. Удаляем студентов, у которых в имени есть цифры
         if any(ch.isdigit() for ch in name):
             continue
-
-        # Преобразуем имя в title
         clean_name = name.title()
-
-        # 2. Обработка оценок
         processed_grades = []
         for grade in student.get("grades", []):
-            # удаляем отрицательные и нулевые
             if grade <= 0:
                 continue
-
-            # нечётные оценки меньше 10 заменяем на сумму цифр
             if grade % 2 == 1 and grade < 10:
                 digit_sum = sum(int(d) for d in str(abs(grade)))
                 processed_grades.append(digit_sum)
-
-            # чётные оценки >= 10 возводим в квадрат
             elif grade % 2 == 0 and grade >= 10:
                 processed_grades.append(grade ** 2)
-
-            # остальные оставляем как есть
             else:
                 processed_grades.append(grade)
-
-        # 3. Анализ комментариев
         comments = student.get("comments", [])
         joined_comments = " ".join(comments)
-
-        # удаляем знаки препинания
         cleaned_text = ""
         for ch in joined_comments:
             if ch.isalpha() or ch.isspace():
                 cleaned_text += ch
             else:
                 cleaned_text += " "
-
         words = cleaned_text.lower().split()
-
-        # уникальные слова длиной >= 4, не палиндромы
         unique_words = []
         seen_words = set()
-
         for word in words:
             if len(word) >= 4 and word != word[::-1] and word not in seen_words:
                 unique_words.append(word)
                 seen_words.add(word)
-
-        # множество гласных, встречающихся в этих словах
         student_vowels = set()
         for word in unique_words:
             for ch in word:
                 if ch in vowels:
                     student_vowels.add(ch.lower())
-
-        # обновляем общее множество гласных
         all_vowels.update(student_vowels)
-
-        # глобальный анализ слов:
-        # считаем, у скольких студентов встречается слово
         unique_for_student = set(unique_words)
         for word in unique_for_student:
             global_word_counts[word] = global_word_counts.get(word, 0) + 1
-
-        # сохраняем студента
         result_students.append({
             "name": clean_name,
             "processed_grades": processed_grades
         })
-
-    # 4. Оставляем только слова, встречающиеся минимум у 2 студентов
     filtered_word_counts = dict(
         filter(lambda item: item[1] >= 2, global_word_counts.items())
     )
-
-    # сортируем по убыванию количества, при равенстве — по алфавиту
     sorted_word_counts = dict(
         sorted(filtered_word_counts.items(), key=lambda item: (-item[1], item[0]))
     )
-
-    # 5. Список студентов по средней обработанной оценке
     students_with_avg = []
     for student in result_students:
         grades = student["processed_grades"]
@@ -1037,16 +1001,11 @@ def analyze_students(data):
     students_result = []
     global_word_counts = {}
     all_vowels = set()
-
     for student in data:
         name = student["name"]
-
-        # 1. Фильтрация по имени
         if any(ch.isdigit() for ch in name):
             continue
         clean_name = name.title()
-
-        # 2. Обработка оценок
         processed_grades = []
         for grade in student["grades"]:
             if grade <= 0:
@@ -1058,45 +1017,32 @@ def analyze_students(data):
                 processed_grades.append(grade ** 2)
             else:
                 processed_grades.append(grade)
-
-        # 3. Анализ комментариев
         joined_comments = " ".join(student["comments"])
-
         cleaned_text = ""
         for ch in joined_comments:
             if ch.isalpha() or ch.isspace():
                 cleaned_text += ch.lower()
             else:
                 cleaned_text += " "
-
         words = cleaned_text.split()
-
         unique_words = []
         seen = set()
         for word in words:
             if len(word) >= 4 and word != word[::-1] and word not in seen:
                 unique_words.append(word)
                 seen.add(word)
-
         student_vowels = set()
         for word in unique_words:
             for ch in word:
                 if ch in vowels:
                     student_vowels.add(ch.lower())
-
         all_vowels.update(student_vowels)
-
-        # Глобальный подсчёт слов:
-        # считаем, у скольких студентов встретилось слово
         for word in set(unique_words):
             global_word_counts[word] = global_word_counts.get(word, 0) + 1
-
         students_result.append({
             "name": clean_name,
             "processed_grades": processed_grades
         })
-
-    # 4. Оставляем слова, которые есть минимум у 2 студентов
     filtered_word_counts = dict(
         filter(lambda item: item[1] >= 2, global_word_counts.items())
     )
@@ -1104,8 +1050,6 @@ def analyze_students(data):
     sorted_word_counts = dict(
         sorted(filtered_word_counts.items(), key=lambda item: (-item[1], item[0]))
     )
-
-    # 5. Список студентов по средней обработанной оценке
     students_with_avg = []
     for student in students_result:
         grades = student["processed_grades"]
