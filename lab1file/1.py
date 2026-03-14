@@ -900,7 +900,6 @@ def partition_by_sum_parity(s):
     for num in s:
         digit_sum = 0
         temp = abs(num)
-
         while temp > 0:
             digit_sum += temp % 10
             temp //= 10
