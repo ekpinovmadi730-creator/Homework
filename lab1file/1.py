@@ -896,7 +896,6 @@ print(f(data))
 def partition_by_sum_parity(s):
     even_set = set()
     odd_set = set()
-
     for num in s:
         digit_sum = 0
         temp = abs(num)
@@ -1058,7 +1057,6 @@ def analyze_students(data):
     students_with_avg.sort(key=lambda x: (-x[1], x[0]))
     students_by_avg = [name for name, avg in students_with_avg]
 
-    # Словарь {длина имени: [имена]} без дубликатов
     students_by_name_length = {}
     for student in students_result:
         name = student["name"]
