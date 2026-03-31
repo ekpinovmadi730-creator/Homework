@@ -100,7 +100,27 @@
 #     map(lambda x: x/2 if x % 2 == 0 else x*3,filter(lambda x: x > 5, numbers)))
 # print(result)
 #4
-
+# from flask import Flask, jsonify
+# from flasgger import Swagger
+# app = Flask(__name__)
+# swagger = Swagger(app)
+#
+# def my_task():
+#     result = sum(range(1,1000000))
+#     return result
+# @app.route('/run-task')
+# def run_task():
+#
+# @app.route("/sum")
+# def sum_ab():
+#     a = 5
+#     b = 3
+#     return str(a+b)
+# def home():
+#         return "Сервер работает"
+# if __name__ == "__main__":
+#     app.run(port=5000)
+# print(run_task())
 
 
 

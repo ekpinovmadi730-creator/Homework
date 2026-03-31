@@ -1,3 +1,4 @@
+"""
 # print("fdfg")
 #2
 def change_text(s):
@@ -1075,3 +1076,69 @@ def analyze_students(data):
         "students_by_avg": students_by_avg,
         "students_by_name_length": students_by_name_length
     }
+"""
+#1
+class Player:
+    def __init__(self, id_nomer, aty, jan_uiai):
+        self._id = id_nomer
+        self._name = aty.strip().title()
+        if jan_uiai < 0:
+            self._hp = 0
+        else:
+            self._hp = jan_uiai
+    def __str__(self):
+        return f"Player(id={self._id}, name='{self._name}', hp={self._hp})"
+    def __del__(self):
+        print(f"Player {self._name} жойылды")
+p1 = Player(1, "  batyr  ", 100)
+print(p1)
+del p1
+
+#3
+class Item:
+    def __init__(self, id, name, power):
+        self.id = id
+        self.name = name.strip().title()
+        self.power = power
+
+    def __str__(self):
+        return f"Item(id={self.id}, name='{self.name}', power={self.power})"
+
+    def __eq__(self, other):
+        return self.id == other.id
+
+    def __hash__(self):
+        return hash(self.id)
+i = Item(1, " Sword ", 50)
+print(i)
+
+
+# from flask import Flask, jsonify
+# from flasgger import Swagger
+#
+# app = Flask(__name__)
+# swagger = Swagger(app)
+#
+#
+# @app.route('/sum')
+# def sum_ab():
+#     """
+#     ---
+#     responses:
+#       200:
+#         description: Результат сложения
+#     """
+#     a = 5
+#     b = 3
+#     return str(a + b)
+# @app.route('/')
+# def home():
+#     """
+#     ---
+#     responses:
+#       200:
+#         description: Главная страница
+#     """
+#     return "Сервер работает"
+# if __name__ == '__main__':
+#     app.run(port=5000)
