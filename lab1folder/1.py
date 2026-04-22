@@ -1,4 +1,4 @@
-"""
+
 # print("fdfg")
 #2
 def change_text(s):
@@ -1076,7 +1076,6 @@ def analyze_students(data):
         "students_by_avg": students_by_avg,
         "students_by_name_length": students_by_name_length
     }
-"""
 #1
 class Player:
     def __init__(self, id_nomer, aty, jan_uiai):
@@ -1113,32 +1112,40 @@ i = Item(1, " Sword ", 50)
 print(i)
 
 
-# from flask import Flask, jsonify
-# from flasgger import Swagger
-#
-# app = Flask(__name__)
-# swagger = Swagger(app)
-#
-#
-# @app.route('/sum')
-# def sum_ab():
-#     """
-#     ---
-#     responses:
-#       200:
-#         description: Результат сложения
-#     """
-#     a = 5
-#     b = 3
-#     return str(a + b)
-# @app.route('/')
-# def home():
-#     """
-#     ---
-#     responses:
-#       200:
-#         description: Главная страница
-#     """
-#     return "Сервер работает"
-# if __name__ == '__main__':
-#     app.run(port=5000)
+from flask import Flask, jsonify
+from flasgger import Swagger
+
+app = Flask(__name__)
+swagger = Swagger(app)
+
+
+@app.route('/sum')
+def sum_ab():
+    """
+    ---
+    responses:
+      200:
+        description: Результат сложения
+    """
+    a = 5
+    b = 3
+    return str(a + b)
+@app.route('/')
+def home():
+    """
+    ---
+    responses:
+      200:
+        description: Главная страница
+    """
+    return "Сервер работает"
+if __name__ == '__main__':
+    app.run(port=5000)
+    # events = []
+    # for player in players:
+    #     for _ in range(n):
+    #         etype = pick_type()
+    #         if etype == "ATTACK":
+    #             data = {"damage": random.randint(5, 30), "player_id": player.id}
+    #         elif etype == "HEAL":
+    #             data = {"heal": ra

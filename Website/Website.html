@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot | Sports Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .chat-page-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 24px;
+            margin-bottom: 60px;
+            align-items: start;
+        }
+
+        /* Sidebar */
+        .chat-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .chat-sidebar-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px;
+        }
+        .chat-sidebar-title {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 14px;
+        }
+        .topic-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 10px 12px;
+            margin-bottom: 6px;
+            background: var(--bg-3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-dim);
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .topic-btn:hover { border-color: var(--accent); color: var(--text); background: rgba(0,229,255,0.06); }
+        .topic-btn:last-child { margin-bottom: 0; }
+
+        .capability-item {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.83rem;
+            color: var(--text-dim);
+        }
+        .capability-item:last-child { border-bottom: none; }
+        .capability-item span:first-child { font-size: 1.1rem; flex-shrink: 0; }
+
+        /* Chat main */
+        .chat-main { display: flex; flex-direction: column; gap: 14px; }
+
+        .chat-messages {
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            min-height: 360px;
+            max-height: 520px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .msg { display: flex; flex-direction: column; max-width: 92%; gap: 4px; }
+        .msg.bot { align-self: flex-start; }
+        .msg.user { align-self: flex-end; }
+
+        .msg-bubble {
+            padding: 12px 16px;
+            border-radius: 14px;
+            font-size: 0.88rem;
+            line-height: 1.65;
+        }
+        .msg.bot .msg-bubble {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+            color: var(--text);
+        }
+        .msg.user .msg-bubble {
+            background: rgba(0,229,255,0.12);
+            border: 1px solid rgba(0,229,255,0.3);
+            border-bottom-right-radius: 4px;
+            color: var(--text);
+        }
+        .msg-sender {
+            font-family: var(--font-mono);
+            font-size: 9px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 0 4px;
+        }
+        .msg.user .msg-sender { text-align: right; }
+
+        /* Video wrapper inside bubble */
+        .video-wrap {
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0 14px;
+            border: 1px solid rgba(0,229,255,0.25);
+            background: #000;
+            position: relative;
+            aspect-ratio: 16/9;
+            width: 100%;
+        }
+        .video-wrap iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .chat-input-area { display: flex; flex-direction: column; gap: 10px; }
+
+        .chat-input-row {
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input-row input {
+            flex: 1;
+            padding: 14px 18px;
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .chat-input-row input:focus { border-color: var(--accent); }
+        .chat-input-row input::placeholder { color: var(--text-muted); }
+
+        .chat-input-row button {
+            padding: 14px 22px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chat-input-row button:hover { background: #33ecff; box-shadow: 0 0 20px rgba(0,229,255,0.35); }
+
+        .quick-topics {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .quick-btn {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 6px 12px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quick-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,0.06); }
+
+        /* Typing indicator */
+        .typing-dots span {
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            margin-right: 3px;
+            animation: typingBounce 1.2s infinite;
+        }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+            40% { transform: translateY(-5px); opacity: 1; }
+        }
+
+        @media (max-width: 780px) {
+            .chat-page-layout { grid-template-columns: 1fr; }
+            .chat-sidebar { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+    <nav class="navbar container">
+        <a href="index.html" class="logo">SPORTS<span>PORTAL</span></a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="news.html">News</a>
+            <a href="players.html">Players</a>
+            <a href="sports.html">Sports</a>
+            <a href="chatbot.html" class="btn-chat active">Chatbot</a>
+        </div>
+    </nav>
+</header>
+
+<!-- ── MAIN ── -->
+<main>
+    <section class="hero-section container" style="padding-bottom:40px;">
+        <div class="hero-label">AI-Powered</div>
+        <h1>Sports <span>Assistant</span></h1>
+        <p>Ask about training tips, sport rules, players, or anything in the sports world.</p>
+    </section>
+
+    <div class="container">
+        <div class="chat-page-layout">
+
+            <!-- Sidebar -->
+            <aside class="chat-sidebar">
+                <div class="chat-sidebar-card">
+                    <div class="chat-sidebar-title">Quick Topics</div>
+                    <button class="topic-btn" onclick="sendQuick('Tell me about Football training tips')">⚽ Football Tips</button>
+                    <button class="topic-btn" onclick="sendQuick('What are the rules of Basketball?')">🏀 Basketball Rules</button>
+                    <button class="topic-btn" onclick="sendQuick('How do I improve at Tennis?')">🎾 Tennis Drills</button>
+                    <button class="topic-btn" onclick="sendQuick('Give me a Boxing workout')">🥊 Boxing Workout</button>
+                    <button class="topic-btn" onclick="sendQuick('What are the best Swimming techniques?')">🏊 Swimming Technique</button>
+                    <button class="topic-btn" onclick="sendQuick('How does Formula 1 scoring work?')">🏎 F1 Scoring</button>
+                    <button class="topic-btn" onclick="sendQuick('What is the best diet for athletes?')">🥗 Athlete Nutrition</button>
+                    <button class="topic-btn" onclick="sendQuick('How do I recover faster after sports?')">💪 Recovery Tips</button>
+                </div>
+
+                <div class="chat-sidebar-card">
+                    <div class="chat-sidebar-title">I Can Help With</div>
+                    <div class="capability-item"><span>🏆</span><span>Sport rules and regulations</span></div>
+                    <div class="capability-item"><span>📊</span><span>Player stats & comparisons</span></div>
+                    <div class="capability-item"><span>🏃</span><span>Training & drill advice</span></div>
+                    <div class="capability-item"><span>🥗</span><span>Nutrition for athletes</span></div>
+                    <div class="capability-item"><span>💤</span><span>Recovery & sleep science</span></div>
+                    <div class="capability-item"><span>📅</span><span>Tournament formats</span></div>
+                </div>
+            </aside>
+
+            <!-- Chat main -->
+            <div class="chat-main">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Welcome message -->
+                    <div class="msg bot">
+                        <div class="msg-sender">Sports Assistant</div>
+                        <div class="msg-bubble">
+                            👋 Welcome! I'm your Sports Assistant. Ask me about:<br><br>
+                            • Training tips for any sport<br>
+                            • Rules and how the sport works<br>
+                            • Player stats and comparisons<br>
+                            • Nutrition and recovery advice<br><br>
+                            Try one of the quick topics on the left, or just type your question!
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <div class="chat-input-row">
+                        <input id="chatInput" type="text" placeholder="Ask me about any sport..." onkeydown="if(event.key==='Enter') sendMessage()">
+                        <button onclick="sendMessage()">Send</button>
+                    </div>
+                    <div class="quick-topics">
+                        <button class="quick-btn" onclick="sendQuick('Football')">⚽ Football</button>
+                        <button class="quick-btn" onclick="sendQuick('Basketball')">🏀 Basketball</button>
+                        <button class="quick-btn" onclick="sendQuick('Tennis')">🎾 Tennis</button>
+                        <button class="quick-btn" onclick="sendQuick('Boxing')">🥊 Boxing</button>
+                        <button class="quick-btn" onclick="sendQuick('Swimming')">🏊 Swimming</button>
+                        <button class="quick-btn" onclick="sendQuick('Formula 1')">🏎 F1</button>
+                        <button class="quick-btn" onclick="sendQuick('Nutrition tips for athletes')">🥗 Nutrition</button>
+                        <button class="quick-btn" onclick="sendQuick('Recovery tips')">💤 Recovery</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- ── FOOTER ── -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <a href="index.html" class="logo">SPORTS<span>PORTAL</span></a>
+                <p>Your AI-powered sports companion — ask anything, anytime.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigation</h4>
+                <a href="index.html">Home</a>
+                <a href="news.html">News</a>
+                <a href="players.html">Players</a>
+                <a href="sports.html">Sports</a>
+                <a href="chatbot.html">Chatbot</a>
+            </div>
+            <div class="footer-col">
+                <h4>Topics</h4>
+                <a href="#" onclick="sendQuick('Football training');return false;">Football</a>
+                <a href="#" onclick="sendQuick('Basketball drills');return false;">Basketball</a>
+                <a href="#" onclick="sendQuick('Tennis technique');return false;">Tennis</a>
+                <a href="#" onclick="sendQuick('Boxing conditioning');return false;">Boxing</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 Sports Portal. All rights reserved.</span>
+            <span>Chatbot answers are educational and general in nature</span>
+        </div>
+    </div>
+</footer>
+
+<script>
+/* ────────────────────────────────────────────────
+   VIDEO HELPER — iframe блок жасайды
+   vid  = YouTube Video ID  (youtube.com/watch?v=XXXX)
+   ─────────────────────────────────────────────── */
+function videoBlock(vid) {
+    return `
+        <div class="video-wrap">
+            <iframe
+                src="https://www.youtube.com/embed/${vid}?rel=0&modestbranding=1"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>`;
+}
+
+/* ────────────────────────────────────────────────
+   KNOWLEDGE BASE
+   ⬇️  VIDEO_ID — YouTube сілтемесінен өзгертіңіз
+   youtube.com/watch?v=[ VIDEO_ID ]
+   ─────────────────────────────────────────────── */
+const KB = {
+
+    football: {
+        keywords: ['football', 'soccer', 'fifa', 'striker', 'goalkeeper', 'offsid'],
+        response: `⚽ <strong>Football</strong><br><br>
+${videoBlock('aVfSZ8vyD7Y')}
+<strong>Sport overview:</strong> Played by two teams of 11 players across 90 minutes (+ stoppage time). The team scoring the most goals wins.<br><br>
+<strong>Key training tips:</strong><br>
+• <em>Sprint intervals:</em> 4×40m sprints with 90s rest — builds explosive pace<br>
+• <em>Ball control:</em> Juggling, wall passing drills (300 touches/day)<br>
+• <em>Fitness:</em> Zone-2 cardio 3×/week + HIIT sessions<br>
+• <em>Tactics:</em> Study positional play, pressing triggers, and set pieces<br><br>
+<strong>Top leagues:</strong> Premier League, La Liga, Bundesliga, Serie A, MLS<br><br>
+<strong>Did you know?</strong> The average top-flight player runs 10–13 km per match.`
+    },
+
+    basketball: {
+        keywords: ['basketball', 'nba', 'dribble', 'dunk', 'three point', '3-point', 'curry', 'lebron'],
+        response: `🏀 <strong>Basketball</strong><br><br>
+${videoBlock('HXAQd4gpVHU')}
+<strong>Sport overview:</strong> 5 vs 5 across four 12-minute quarters. Teams score by shooting through the hoop — worth 1 (free throw), 2 (inside arc), or 3 (beyond 7.24m) points.<br><br>
+<strong>Key training tips:</strong><br>
+• <em>Ball handling:</em> Stationary dribbling → crossover → behind-back combos daily<br>
+• <em>Shooting:</em> 200+ shots per session — BEEF form (Balance, Eyes, Elbow, Follow-through)<br>
+• <em>Vertical jump:</em> Depth jumps, box jumps, and calf raises<br>
+• <em>Defense:</em> Defensive slides with resistance bands<br><br>
+<strong>Top competitions:</strong> NBA, EuroLeague, FIBA World Cup<br><br>
+<strong>Did you know?</strong> Stephen Curry's release point is only 0.4 seconds — the fastest in NBA history.`
+    },
+
+    tennis: {
+        keywords: ['tennis', 'serve', 'backhand', 'forehand', 'djokovic', 'alcaraz', 'nadal', 'wimbledon', 'grand slam'],
+        response: `🎾 <strong>Tennis</strong><br><br>
+${videoBlock('IiRGdagtOKE')}
+<strong>Sport overview:</strong> Singles or doubles on hard, clay, or grass courts. Win sets by reaching 6 games with a 2-game lead (or tie-break at 6-6). Grand Slams are best-of-5 sets.<br><br>
+<strong>Key training tips:</strong><br>
+• <em>Serve:</em> Focus on ball toss consistency — toss slightly in front and to the right (right-handers)<br>
+• <em>Footwork:</em> Split-step before every shot; shuffle, don't cross feet<br>
+• <em>Endurance:</em> Clay court matches can last 5+ hours — build aerobic base<br>
+• <em>Mental game:</em> Routine between points reduces unforced errors by ~18%<br><br>
+<strong>Grand Slams:</strong> Australian Open, Roland Garros, Wimbledon, US Open<br><br>
+<strong>Did you know?</strong> A professional tennis serve can exceed 250 km/h.`
+    },
+
+    boxing: {
+        keywords: ['boxing', 'punch', 'jab', 'uppercut', 'knockout', 'heavyweight', 'fury', 'usyk'],
+        response: `🥊 <strong>Boxing</strong><br><br>
+${videoBlock('nTLuZwkW0xU')}
+<strong>Sport overview:</strong> Two fighters exchange punches inside a ring over 10-12 rounds (3 min each). Victory via KO, TKO, or judges' decision.<br><br>
+<strong>Key training tips:</strong><br>
+• <em>Shadow boxing:</em> 3×3-minute rounds daily — visualize opponent, work combinations<br>
+• <em>Heavy bag:</em> Power combinations: jab-cross-left hook-right uppercut<br>
+• <em>Core strength:</em> Planks, medicine ball throws, rotational exercises<br>
+• <em>Footwork:</em> Ladder drills and cone agility for ring movement<br>
+• <em>Sparring:</em> Always use mouthguard, headgear, and proper gloves<br><br>
+<strong>Major titles:</strong> WBC, WBA, IBF, WBO — all four = "Undisputed Champion"<br><br>
+<strong>Did you know?</strong> Boxers can punch with up to 1,000 kg of force.`
+    },
+
+    swimming: {
+        keywords: ['swimming', 'swim', 'freestyle', 'butterfly', 'backstroke', 'breaststroke', 'pool', 'marchand'],
+        response: `🏊 <strong>Swimming</strong><br><br>
+${videoBlock('ZdKBXAoxoDE')}
+<strong>Sport overview:</strong> Competitive swimming uses four strokes — freestyle, backstroke, breaststroke, and butterfly — across distances from 50m to 1500m.<br><br>
+<strong>Key training tips:</strong><br>
+• <em>Technique first:</em> Correct stroke mechanics save far more energy than fitness<br>
+• <em>Drills:</em> Catch-up drill (freestyle), fingertip drag, single-arm butterfly<br>
+• <em>Breathing:</em> Exhale fully underwater — panic breathing wastes oxygen<br>
+• <em>Turns:</em> Fast flip turns can save 2–4 seconds per 100m<br>
+• <em>Yardage:</em> Elite swimmers log 70,000–80,000m per week<br><br>
+<strong>Did you know?</strong> Léon Marchand holds world records in four individual events — a feat unmatched since Michael Phelps.`
+    },
+
+    f1: {
+        keywords: ['formula 1', 'formula one', 'f1', 'racing', 'verstappen', 'ferrari', 'mercedes', 'red bull', 'monaco', 'drs', 'pit stop'],
+        response: `🏎 <strong>Formula 1</strong><br><br>
+${videoBlock('VybzXU1dYk4')}
+<strong>Sport overview:</strong> 20 drivers, 10 constructors, 23 race weekends per season. Points awarded from 25 (1st) down to 1 (10th). Fastest lap earns 1 bonus point.<br><br>
+<strong>How a race works:</strong><br>
+• <em>Qualifying:</em> Three-session knockout to set the grid order<br>
+• <em>Race:</em> Drivers must use at least 2 different tyre compounds<br>
+• <em>DRS:</em> Drag Reduction System — opens rear wing for extra speed when within 1 second of the car ahead<br>
+• <em>Pit stops:</em> Tyre changes average 2.5 seconds by elite crews<br><br>
+<strong>Iconic circuits:</strong> Monaco, Silverstone, Monza, Spa, Suzuka<br><br>
+<strong>Did you know?</strong> F1 cars can accelerate from 0–300 km/h and brake back to zero in under 10 seconds.`
+    },
+
+    nutrition: {
+        keywords: ['nutrition', 'diet', 'food', 'eat', 'protein', 'carbs', 'hydration', 'meal'],
+        response: `🥗 <strong>Athlete Nutrition</strong><br><br>
+${videoBlock('knsaQ9I5NpY')}
+<strong>Macronutrients:</strong><br>
+• <em>Protein:</em> 1.6–2.2g per kg bodyweight for muscle repair and growth<br>
+• <em>Carbohydrates:</em> Primary fuel source — rice, oats, sweet potato, banana<br>
+• <em>Fats:</em> Healthy fats (avocado, nuts, olive oil) support hormone production<br><br>
+<strong>Timing:</strong><br>
+• Pre-workout (2-3h before): Carbs + moderate protein, low fat<br>
+• Post-workout (within 45 min): Protein + carbs to maximize recovery<br>
+• Hydration: 500ml water 2h pre-exercise; sip 150-250ml every 20 min during<br><br>
+<strong>Elite secrets:</strong><br>
+• Creatine monohydrate (5g/day) — most researched legal performance supplement<br>
+• Sleep 8-10 hours — growth hormone peaks at night<br>
+• Periodize your nutrition to match training load`
+    },
+
+    recovery: {
+        keywords: ['recovery', 'rest', 'sleep', 'sore', 'muscle', 'ice bath', 'foam roll', 'stretch'],
+        response: `💤 <strong>Athlete Recovery</strong><br><br>
+${videoBlock('dU8Wbsc2k3c')}
+<strong>The Big Three:</strong><br>
+• <em>Sleep:</em> 8-10 hours is the single most powerful recovery tool. REM sleep triggers muscle protein synthesis.<br>
+• <em>Nutrition:</em> 0.3g/kg protein within 45 min post-training<br>
+• <em>Hydration:</em> Replace 150% of fluid lost during training<br><br>
+<strong>Active Recovery Methods:</strong><br>
+• <em>Foam rolling (SMR):</em> 60 seconds per muscle group to reduce DOMS<br>
+• <em>Cold water immersion:</em> 12-15°C for 10-12 min reduces inflammation<br>
+• <em>Compression garments:</em> Improve venous return and reduce swelling<br>
+• <em>Yoga/stretching:</em> 20-30 min daily improves range of motion over time<br><br>
+<strong>Pro tip:</strong> Elite athletes treat recovery as a training session itself. Schedule it, track it, prioritize it.`
+    }
+};
+
+/* ── Жауап іздеу ── */
+function findResponse(text) {
+    const lower = text.toLowerCase();
+    for (const [, data] of Object.entries(KB)) {
+        if (data.keywords.some(kw => lower.includes(kw))) {
+            return data.response;
+        }
+    }
+    return `🤖 That's a great question! I'm specialized in sports topics. Try asking me about:<br><br>
+⚽ Football &nbsp;|&nbsp; 🏀 Basketball &nbsp;|&nbsp; 🎾 Tennis<br>
+🥊 Boxing &nbsp;|&nbsp; 🏊 Swimming &nbsp;|&nbsp; 🏎 Formula 1<br>
+🥗 Athlete Nutrition &nbsp;|&nbsp; 💤 Recovery Tips<br><br>
+For example: <em>"How do I improve my tennis serve?"</em>`;
+}
+
+/* ── Хабарлама қосу ── */
+function appendMsg(text, type) {
+    const feed = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = `msg ${type}`;
+    const sender = type === 'bot' ? 'Sports Assistant' : 'You';
+    div.innerHTML = `
+        <div class="msg-sender">${sender}</div>
+        <div class="msg-bubble">${text}</div>
+    `;
+    feed.appendChild(div);
+    feed.scrollTop = feed.scrollHeight;
+}
+
+/* ── Typing индикаторы ── */
+function showTyping() {
+    const feed = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'msg bot';
+    div.id = 'typingIndicator';
+    div.innerHTML = `
+        <div class="msg-sender">Sports Assistant</div>
+        <div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>
+    `;
+    feed.appendChild(div);
+    feed.scrollTop = feed.scrollHeight;
+}
+
+function removeTyping() {
+    const el = document.getElementById('typingIndicator');
+    if (el) el.remove();
+}
+
+/* ── Жіберу ── */
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+
+    appendMsg(text, 'user');
+    showTyping();
+
+    setTimeout(() => {
+        removeTyping();
+        appendMsg(findResponse(text), 'bot');
+    }, 900 + Math.random() * 600);
+}
+
+function sendQuick(topic) {
+    document.getElementById('chatInput').value = topic;
+    sendMessage();
+}
+</script>
+
+</body>
+</html>
